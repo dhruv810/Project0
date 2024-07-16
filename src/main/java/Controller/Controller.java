@@ -35,7 +35,7 @@ public class Controller {
         return app;
     }
 
-    public void createNewPlayer(Context context) throws JsonProcessingException {
+    public void createNewPlayer(Context context) {
         Player player = context.bodyAsClass(Player.class);
 
 
@@ -51,7 +51,7 @@ public class Controller {
 
     }
 
-    public void login(Context context) throws JsonProcessingException {
+    public void login(Context context) {
         Player player = context.bodyAsClass(Player.class);
 
         Player varifiedPlayer = playerService.verifyPlayerCredentials(player);
@@ -69,7 +69,7 @@ public class Controller {
         context.json(videogames);
     }
 
-    private void getVideogameById(Context context) throws JsonProcessingException {
+    private void getVideogameById(Context context) {
         int gameId = Integer.parseInt(context.pathParam("gameId"));
 
         VideoGames videogames = videoGameService.getVideoGameById(gameId);
@@ -83,7 +83,7 @@ public class Controller {
         }
     }
 
-    private void createVideoGame(Context context) throws JsonProcessingException {
+    private void createVideoGame(Context context) {
         VideoGames videogame = context.bodyAsClass(VideoGames.class);
 
         VideoGames createdVideogame = videoGameService.createVideoGame(videogame);
