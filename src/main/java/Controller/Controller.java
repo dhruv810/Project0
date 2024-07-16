@@ -4,7 +4,6 @@ import Model.Player;
 import Model.VideoGames;
 import Service.PlayerService;
 import Service.VideoGameService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -37,7 +36,6 @@ public class Controller {
 
     public void createNewPlayer(Context context) {
         Player player = context.bodyAsClass(Player.class);
-
 
         Player newlyCreatedPlayer = playerService.createNewPlayer(player);
 
