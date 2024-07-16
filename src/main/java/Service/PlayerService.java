@@ -12,14 +12,14 @@ public class PlayerService {
     }
 
     public Player createNewPlayer(Player player) {
-        if (player == null || player.getUsername().isEmpty() || player.getPassword().length() < 5 || this.playerDAO.checkPlayerByUsername(player.getUsername())) {
+        if (player == null || player.getUsername().isEmpty() || player.getPassword().length() < 2 || this.playerDAO.checkPlayerByUsername(player.getUsername())) {
             return null;
         }
         return this.playerDAO.createNewPlayer(player);
     }
 
     public Player verifyPlayerCredentials(Player player) {
-        if (player == null || player.getUsername().isEmpty() || player.getPassword().length() < 5) {
+        if (player == null || player.getUsername().isEmpty() || player.getPassword().length() < 2) {
             return null;
         }
         return this.playerDAO.varifyPlayer(player.getUsername(), player.getPassword());

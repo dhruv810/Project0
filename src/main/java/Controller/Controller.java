@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 
@@ -29,16 +28,16 @@ public class Controller {
         app.get("videogames", this::getAllVideogames);
         app.get("videogames/{gameId}", this::getVideogameById);
         app.post("createvideogame", this::createVideoGame);
-        app.delete("deletegame/{gameId}/{playerId}", this::deleteGame);
-        app.patch("updateowner/{gameId}/{playerId}", this::updateOwner);
+        app.delete("deletegame/{gameId}", this::deleteGame); // verify
+        app.patch("updateowner/{gameId}", this::updateOwner); // verify
         app.get("videogamesbyowner/{playerId}", this::getVideogamesByOwner);
         app.get("/", ctx -> ctx.result("Hello, Javalin!"));
         return app;
     }
 
     public void createNewPlayer(Context context) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Player player = mapper.readValue(context.body(), Player.class);
+        Player player = context.bodyAsClass(Player.class);
+
 
         Player newlyCreatedPlayer = playerService.createNewPlayer(player);
 
@@ -47,21 +46,21 @@ public class Controller {
             context.result("Player could not be created");
         }
         else {
-            context.json(mapper.writeValueAsString(newlyCreatedPlayer));
+            context.json(newlyCreatedPlayer);
         }
 
     }
 
     public void login(Context context) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Player player = mapper.readValue(context.body(), Player.class);
+        Player player = context.bodyAsClass(Player.class);
 
         Player varifiedPlayer = playerService.verifyPlayerCredentials(player);
         if (varifiedPlayer == null) {
             context.status(401);
+            context.result("invalid credentials");
         }
         else {
-            context.json(mapper.writeValueAsString(varifiedPlayer));
+            context.json(varifiedPlayer);
         }
     }
 
@@ -72,7 +71,6 @@ public class Controller {
 
     private void getVideogameById(Context context) throws JsonProcessingException {
         int gameId = Integer.parseInt(context.pathParam("gameId"));
-        ObjectMapper mapper = new ObjectMapper();
 
         VideoGames videogames = videoGameService.getVideoGameById(gameId);
 
@@ -81,13 +79,12 @@ public class Controller {
             context.result("Game not found");
         }
         else {
-            context.json(mapper.writeValueAsString(videogames));
+            context.json(videogames);
         }
     }
 
     private void createVideoGame(Context context) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        VideoGames videogame = mapper.readValue(context.body(), VideoGames.class);
+        VideoGames videogame = context.bodyAsClass(VideoGames.class);
 
         VideoGames createdVideogame = videoGameService.createVideoGame(videogame);
 
@@ -96,16 +93,14 @@ public class Controller {
             context.result("Videogame creation failed");
         }
         else {
-            context.json(mapper.writeValueAsString(createdVideogame));
+            context.json(createdVideogame);
         }
     }
 
     private void deleteGame(Context context) {
-        ObjectMapper mapper = new ObjectMapper();
         int videoGameId = Integer.parseInt(context.pathParam("gameId"));
-        int playerId = Integer.parseInt(context.pathParam("playerId"));
 
-        boolean deleted = videoGameService.deleteVideoGame(videoGameId, playerId);
+        boolean deleted = videoGameService.deleteVideoGame(videoGameId);
 
         if (deleted) {
             context.result("Videogame successfully deleted.");
@@ -117,11 +112,15 @@ public class Controller {
     }
 
     private void updateOwner(Context context) {
-        ObjectMapper mapper = new ObjectMapper();
         int videoGameId = Integer.parseInt(context.pathParam("gameId"));
-        int playerId = Integer.parseInt(context.pathParam("playerId"));
+        String newPlayerId = context.queryParam("newPlayerId");
 
-        boolean updated = videoGameService.updateOwner(videoGameId, playerId);
+        if (newPlayerId == null || newPlayerId.isEmpty()) {
+            context.result("Provide newPlayerId in query parameter");
+            return;
+        }
+        int newPlayer = Integer.parseInt(newPlayerId);
+        boolean updated = videoGameService.updateOwner(videoGameId, newPlayer);
 
         if (updated) {
             context.result("Videogame owner successfully updated.");

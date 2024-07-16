@@ -7,9 +7,7 @@ import java.sql.*;
 
 public class PlayerDAO {
     public Player createNewPlayer(Player player) {
-        Connection connection = ConnectionUtil.getConnection();
-
-        try {
+        try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "INSERT INTO player (username, password) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, player.getUsername());
@@ -19,9 +17,9 @@ public class PlayerDAO {
             ResultSet rs = ps.getGeneratedKeys();
 
             if (rs.next()) {
-                Player newPlayer = new Player(rs.getInt("playerId"), player.getUsername(), player.getPassword());
-                System.out.println(newPlayer);
-                return newPlayer;
+                return new Player(rs.getInt("playerId"),
+                                            rs.getString("username"),
+                                            rs.getString("password"));
             }
 
         } catch (SQLException e) {
@@ -33,9 +31,7 @@ public class PlayerDAO {
     }
 
     public boolean checkPlayerByUsername(String username) {
-        Connection connection = ConnectionUtil.getConnection();
-
-        try {
+        try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM player WHERE username = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
@@ -51,18 +47,17 @@ public class PlayerDAO {
     }
 
     public Player varifyPlayer(String username, String password) {
-        Connection connection = ConnectionUtil.getConnection();
-
-        try {
+        try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM player WHERE username = ? and password = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
 
             ResultSet rs = ps.executeQuery();
-
             if (rs.next()) {
-                return new Player(rs.getInt("playerId"), username, password);
+                return new Player(rs.getInt("playerId"),
+                        rs.getString("username"),
+                        rs.getString("password"));
             }
 
         } catch (SQLException e) {
@@ -72,9 +67,7 @@ public class PlayerDAO {
     }
 
     public boolean checkPlayerByPlayerId(int owner) {
-        Connection connection = ConnectionUtil.getConnection();
-
-        try {
+        try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM player WHERE playerId = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, owner);

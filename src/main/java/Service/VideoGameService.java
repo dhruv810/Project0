@@ -41,16 +41,16 @@ public class VideoGameService {
 
     }
 
-    public boolean deleteVideoGame(int videoGameId, int playerId) {
-        if (videoGameId < 0 || playerId < 0)
+    public boolean deleteVideoGame(int videoGameId) {
+        if (videoGameId < 0)
             return false;
-        return videoGameDAO.deleteVideoGame(videoGameId, playerId);
+        return videoGameDAO.deleteVideoGame(videoGameId);
     }
 
-    public boolean updateOwner(int videoGameId, int playerId) {
-        if (videoGameId < 0 || playerId < 0)
+    public boolean updateOwner(int videoGameId, int newPlayer) {
+        if (videoGameId < 0 || ! playerDao.checkPlayerByPlayerId(newPlayer))
             return false;
-        return videoGameDAO.updateVideoGame(videoGameId, playerId);
+        return videoGameDAO.updateVideoGame(videoGameId, newPlayer);
     }
 
     public ArrayList<VideoGames> getVideogamesByOwner(int playerId) {
