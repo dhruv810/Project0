@@ -1,5 +1,5 @@
-import Controller.Controller;
-import Util.ConnectionUtil;
+import com.reveture.Controller.Controller;
+import com.reveture.Util.ConnectionUtil;
 import io.javalin.Javalin;
 
 public class Main {

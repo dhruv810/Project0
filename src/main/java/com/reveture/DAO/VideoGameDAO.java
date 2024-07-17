@@ -1,7 +1,7 @@
-package DAO;
+package com.reveture.DAO;
 
-import Model.VideoGames;
-import Util.ConnectionUtil;
+import com.reveture.Model.VideoGames;
+import com.reveture.Util.ConnectionUtil;
 
 import java.sql.*;
 import java.util.ArrayList;

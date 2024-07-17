@@ -1,7 +1,7 @@
-package Service;
+package com.reveture.Service;
 
-import DAO.PlayerDAO;
-import Model.Player;
+import com.reveture.DAO.PlayerDAO;
+import com.reveture.Model.Player;
 
 public class PlayerService {
 

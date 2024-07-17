@@ -1,7 +1,7 @@
-package DAO;
+package com.reveture.DAO;
 
-import Model.Player;
-import Util.ConnectionUtil;
+import com.reveture.Model.Player;
+import com.reveture.Util.ConnectionUtil;
 
 import java.sql.*;
 

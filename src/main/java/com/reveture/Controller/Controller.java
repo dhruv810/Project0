@@ -1,9 +1,9 @@
-package Controller;
+package com.reveture.Controller;
 
-import Model.Player;
-import Model.VideoGames;
-import Service.PlayerService;
-import Service.VideoGameService;
+import com.reveture.Model.Player;
+import com.reveture.Model.VideoGames;
+import com.reveture.Service.PlayerService;
+import com.reveture.Service.VideoGameService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 

@@ -1,4 +1,4 @@
-package Model;
+package com.reveture.Model;
 
 import java.util.Objects;
 

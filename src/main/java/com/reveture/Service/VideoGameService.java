@@ -1,8 +1,8 @@
-package Service;
+package com.reveture.Service;
 
-import DAO.PlayerDAO;
-import DAO.VideoGameDAO;
-import Model.VideoGames;
+import com.reveture.DAO.PlayerDAO;
+import com.reveture.DAO.VideoGameDAO;
+import com.reveture.Model.VideoGames;
 
 import java.util.ArrayList;
 

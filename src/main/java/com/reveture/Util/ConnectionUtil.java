@@ -1,4 +1,4 @@
-package Util;
+package com.reveture.Util;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
 
