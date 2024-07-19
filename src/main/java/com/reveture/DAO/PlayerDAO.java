@@ -1,12 +1,13 @@
 package com.reveture.DAO;
 
+import com.reveture.Exception.CustomException;
 import com.reveture.Model.Player;
 import com.reveture.Util.ConnectionUtil;
 
 import java.sql.*;
 
 public class PlayerDAO {
-    public Player createNewPlayer(Player player) {
+    public Player createNewPlayer(Player player) throws CustomException {
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "INSERT INTO player (username, password) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -21,16 +22,16 @@ public class PlayerDAO {
                                             rs.getString("username"),
                                             rs.getString("password"));
             }
+            else {
+                throw new CustomException("Failed to create new player");
+            }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception occur: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Other exception occur: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
-        return null;
     }
 
-    public boolean checkPlayerByUsername(String username) {
+    public boolean checkPlayerByUsername(String username) throws CustomException {
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM player WHERE username = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -41,12 +42,12 @@ public class PlayerDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception occur: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
         return false;
     }
 
-    public Player varifyPlayer(String username, String password) {
+    public Player varifyPlayer(String username, String password) throws CustomException {
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM player WHERE username = ? and password = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -58,12 +59,13 @@ public class PlayerDAO {
                 return new Player(rs.getInt("playerId"),
                         rs.getString("username"),
                         rs.getString("password"));
+            } else {
+                throw new CustomException("Please enter valid username and password");
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception occur: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
-        return null;
     }
 
     public boolean checkPlayerByPlayerId(int owner) {
@@ -74,13 +76,13 @@ public class PlayerDAO {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return true;
+                return false;
             }
 
         } catch (SQLException e) {
             System.out.println("SQL Exception: " + e.getMessage());
         }
 
-        return false;
+        return true;
     }
 }

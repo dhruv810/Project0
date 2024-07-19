@@ -1,5 +1,6 @@
 package com.reveture.Controller;
 
+import com.reveture.Exception.CustomException;
 import com.reveture.Model.Player;
 import com.reveture.Model.VideoGames;
 import com.reveture.Service.PlayerService;
@@ -37,14 +38,12 @@ public class Controller {
     public void createNewPlayer(Context context) {
         Player player = context.bodyAsClass(Player.class);
 
-        Player newlyCreatedPlayer = playerService.createNewPlayer(player);
-
-        if (newlyCreatedPlayer == null) {
-            context.status(400);
-            context.result("Player could not be created");
-        }
-        else {
+        try {
+            Player newlyCreatedPlayer = playerService.createNewPlayer(player);
             context.json(newlyCreatedPlayer);
+        } catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
 
     }
@@ -52,60 +51,68 @@ public class Controller {
     public void login(Context context) {
         Player player = context.bodyAsClass(Player.class);
 
-        Player varifiedPlayer = playerService.verifyPlayerCredentials(player);
-        if (varifiedPlayer == null) {
-            context.status(401);
-            context.result("invalid credentials");
-        }
-        else {
+        try {
+            Player varifiedPlayer = playerService.verifyPlayerCredentials(player);
             context.json(varifiedPlayer);
+        } catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
     }
 
     private void getAllVideogames(Context context) {
-        ArrayList<VideoGames> videogames = videoGameService.getAllVideoGames();
-        context.json(videogames);
+        try {
+            ArrayList<VideoGames> videogames = videoGameService.getAllVideoGames();
+            context.json(videogames);
+        }
+        catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
+        }
     }
 
     private void getVideogameById(Context context) {
         int gameId = Integer.parseInt(context.pathParam("gameId"));
 
-        VideoGames videogames = videoGameService.getVideoGameById(gameId);
-
-        if (videogames == null) {
-            context.status(400);
-            context.result("Game not found");
-        }
-        else {
+        try {
+            VideoGames videogames = videoGameService.getVideoGameById(gameId);
             context.json(videogames);
+        }
+        catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
     }
 
     private void createVideoGame(Context context) {
         VideoGames videogame = context.bodyAsClass(VideoGames.class);
 
-        VideoGames createdVideogame = videoGameService.createVideoGame(videogame);
-
-        if (createdVideogame == null) {
-            context.status(402);
-            context.result("Videogame creation failed");
-        }
-        else {
+        try {
+            VideoGames createdVideogame = videoGameService.createVideoGame(videogame);
             context.json(createdVideogame);
+        }
+        catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
     }
 
     private void deleteGame(Context context) {
         int videoGameId = Integer.parseInt(context.pathParam("gameId"));
 
-        boolean deleted = videoGameService.deleteVideoGame(videoGameId);
-
-        if (deleted) {
-            context.result("Videogame successfully deleted.");
+        try {
+            boolean deleted = videoGameService.deleteVideoGame(videoGameId);
+            if (deleted) {
+                context.result("Videogame successfully deleted");
+            }
+            else {
+                context.status(500);
+                context.result("Unexpected error occurred");
+            }
         }
-        else {
-            context.status(403);
-            context.result("Could not delete videogame.");
+        catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
     }
 
@@ -118,22 +125,32 @@ public class Controller {
             return;
         }
         int newPlayer = Integer.parseInt(newPlayerId);
-        boolean updated = videoGameService.updateOwner(videoGameId, newPlayer);
-
-        if (updated) {
-            context.result("Videogame owner successfully updated.");
+        try {
+            boolean updated = videoGameService.updateOwner(videoGameId, newPlayer);
+            if (updated) {
+                context.result("Videogame owner successfully updated");
+            }
+            else {
+                context.status(500);
+                context.result("Unexpected error occurred");
+            }
         }
-        else {
-            context.status(404);
-            context.result("Could not update videogame owner.");
+        catch (CustomException e) {
+            context.status(400);
+            context.result(e.getMessage());
         }
     }
 
     private void getVideogamesByOwner(Context context) {
         int playerId = Integer.parseInt(context.pathParam("playerId"));
 
-        ArrayList<VideoGames> videoGames = videoGameService.getVideogamesByOwner(playerId);
-        context.json(videoGames);
+        try {
+            ArrayList<VideoGames> videoGames = videoGameService.getVideogamesByOwner(playerId);
+            context.json(videoGames);
+        }
+        catch (CustomException e) {
+            context.result(e.getMessage());
+        }
     }
 
 }

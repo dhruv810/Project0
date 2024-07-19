@@ -1,5 +1,6 @@
 package com.reveture.DAO;
 
+import com.reveture.Exception.CustomException;
 import com.reveture.Model.VideoGames;
 import com.reveture.Util.ConnectionUtil;
 
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class VideoGameDAO {
-    public ArrayList<VideoGames> getAllVideoGames() {
+    public ArrayList<VideoGames> getAllVideoGames() throws CustomException {
         ArrayList<VideoGames> arraylist = new ArrayList<>();
 
         try(Connection connection = ConnectionUtil.getConnection()) {
@@ -24,13 +25,13 @@ public class VideoGameDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
 
         return arraylist;
     }
 
-    public VideoGames getVideoGameById(int gameId) {
+    public VideoGames getVideoGameById(int gameId) throws CustomException{
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM videogames WHERE gameId = ?";
@@ -45,15 +46,17 @@ public class VideoGameDAO {
                                         rs.getDouble("price"),
                                         rs.getInt("owner"));
             }
+            else {
+                throw new CustomException("Game with Id: " + gameId + " not found");
+            }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred : " + e.getMessage());
         }
 
-        return null;
     }
 
-    public boolean checkVideoGameByNameAndOwner(String gameName, int owner) {
+    public boolean checkVideoGameByNameAndOwner(String gameName, int owner) throws CustomException {
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "SELECT * FROM videogames WHERE gameName = ? AND owner = ? ";
@@ -67,13 +70,12 @@ public class VideoGameDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
-
         return false;
     }
 
-    public VideoGames createVideoGame(VideoGames videogame) {
+    public VideoGames createVideoGame(VideoGames videogame) throws CustomException {
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "INSERT INTO videogames (gameName, price, owner) VALUES (?, ?, ?)";
@@ -91,31 +93,33 @@ public class VideoGameDAO {
                                         rs.getDouble("price"),
                                         rs.getInt("owner"));
             }
+            else {
+                throw new CustomException("Failed to create game");
+            }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
-
-        return null;
     }
 
-    public boolean deleteVideoGame(int videoGameId) {
+    public boolean deleteVideoGame(int videoGameId) throws CustomException{
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "DELETE FROM videogames WHERE gameId = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, videoGameId);
 
-            return ps.executeUpdate() > 0;
+            if (ps.executeUpdate() > 0) {
+                return true;
+            }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
-
         return false;
     }
 
-    public boolean updateVideoGame(int videoGameId, int newPlayer) {
+    public boolean updateVideoGame(int videoGameId, int newPlayer) throws CustomException{
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             String sql = "UPDATE videogames SET owner = ? WHERE gameId = ?";
@@ -123,16 +127,18 @@ public class VideoGameDAO {
             ps.setInt(1, newPlayer);
             ps.setInt(2, videoGameId);
 
-            return ps.executeUpdate() > 0;
+            if (ps.executeUpdate() > 0){
+                return true;
+            }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
 
         return false;
     }
 
-    public ArrayList<VideoGames> getVideoGamesByOwner(int playerId) {
+    public ArrayList<VideoGames> getVideoGamesByOwner(int playerId) throws CustomException {
         ArrayList<VideoGames> arrayList = new ArrayList<>();
 
         try(Connection connection = ConnectionUtil.getConnection()) {
@@ -151,7 +157,7 @@ public class VideoGameDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("SQL Exception: " + e.getMessage());
+            throw new CustomException("SQL exception occurred: " + e.getMessage());
         }
 
         return arrayList;
